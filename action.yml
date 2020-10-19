@@ -66,6 +66,7 @@ runs:
         -d "${payload}"
         response=$(cat curl_out.log)
         echo "Response: $response"
+        echo "DONE..."
       shell: bash
       env:
         AUTH: ${{ inputs.AUTH }}
