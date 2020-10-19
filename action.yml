@@ -60,10 +60,12 @@ runs:
             ]
           }')
         echo "Payload: ${payload}"
-        curl -X POST --verbose -is -u "$AUTH" \
+        curl -X POST --verbose -is -u "$AUTH" --output out.txt -w "%{http_code}" \
         -H 'Content-Type: application/json' \
         "$URL" \
         -d "${payload}"
+        response=$(cat out.txt)
+        echo "Response: $response"
       shell: bash
       env:
         AUTH: ${{ inputs.AUTH }}
