@@ -38,24 +38,24 @@ runs:
             "target": {
               "type": "pipeline_ref_target",
               "ref_type": "branch",
-              "ref_name": "$BRANCH",
+              "ref_name": $BRANCH,
               "selector": {
                 "type": "custom",
-                "pattern": "$CUSTOM_PIPELINE_NAME"
+                "pattern": $CUSTOM_PIPELINE_NAME
               }
             },
             "variables": [
               {
                 "key": "Product_Name",
-                "value": "$PRODUCT_NAME"
+                "value": $PRODUCT_NAME
               },
               {
                 "key": "Version",
-                "value": "$PRODUCT_VERSION"
+                "value": $PRODUCT_VERSION
               },
               {
                 "key": "Source_URL",
-                "value": "$SOURCE_URL"
+                "value": $SOURCE_URL
               }
             ]
           }')
