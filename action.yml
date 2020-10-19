@@ -1,0 +1,74 @@
+name: 'Bitbucket Trigger Pipeline'
+description: 'Trigger the Bitbucket pipeline.'
+inputs:
+  AUTH:
+    description: "Authentication for Bitbucket pipeline."
+    required: true
+  URL:
+    description: "Bitbucket pipelines API URL. E.g. https://api.bitbucket.org/2.0/repositories/zepben/zepben-docs/pipelines/."
+    required: true
+  BRANCH:
+    description: "The name of the branch to run the pipeline on. Default master."
+    required: true
+    default: "master"
+  CUSTOM_PIPELINE_NAME:
+    description: "The name of the custom pipeline to run for a branch."
+    required: true
+  PRODUCT_NAME:
+    description: "The name of the project hosted by the repository."
+    required: true
+  PRODUCT_VERSION:
+    description: "The version fo the project hosted by the repository."
+    required: true
+  SOURCE_URL:
+    description: "The release URL for downloading the source code."
+    required: true
+runs:
+  using: "composite"
+  steps: 
+    - run: |
+        payload=$(jq -n \
+        --arg BRANCH "${BRANCH}" \
+        --arg CUSTOM_PIPELINE_NAME "${CUSTOM_PIPELINE_NAME}" \
+        --arg PRODUCT_NAME "${PRODUCT_NAME}" \
+        --arg PRODUCT_VERSION "${PRODUCT_VERSION}" \
+        --arg SOURCE_URL "${SOURCE_URL}" \
+        '
+          {
+            "target": {
+              "type": "pipeline_ref_target",
+              "ref_type": "branch",
+              "ref_name": "$BRANCH",
+              "selector": {
+                "type": "custom",
+                "pattern": "$CUSTOM_PIPELINE_NAME"
+              }
+            },
+            "variables": [
+              {
+                "key": "Product_Name",
+                "value": "$PRODUCT_NAME"
+              },
+              {
+                "key": "Version",
+                "value": "$PRODUCT_VERSION"
+              },
+              {
+                "key": "Source_URL",
+                "value": "$SOURCE_URL"
+              }
+            ]
+          }')
+        curl -X POST --verbose -is -u "$AUTH" \
+        -H 'Content-Type: application/json' \
+        "$URL" \
+        -d "${payload}"
+      shell: bash
+      env:
+        AUTH: ${{ inputs.AUTH }}
+        URL: ${{ inputs.URL  }}
+        BRANCH: ${{ inputs.BRANCH }}
+        CUSTOM_PIPELINE_NAME: ${{ inputs.CUSTOM_PIPELINE_NAME }}
+        PRODUCT_NAME: ${{ inputs.PRODUCT_NAME }}
+        PRODUCT_VERSION: ${{ inputs.PRODUCT_VERSION }}
+        SOURCE_URL: ${{ inputs.SOURCE_URL }}
