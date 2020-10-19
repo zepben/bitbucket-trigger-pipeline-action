@@ -60,13 +60,19 @@ runs:
             ]
           }')
         echo "Payload: ${payload}"
-        curl -X POST --verbose -is -u "$AUTH" --output curl_out.log -w "%{http_code}" \
+        result=$(curl -X POST -is -u "$AUTH" --output curl_out.log -w "%{http_code}" \
         -H 'Content-Type: application/json' \
         "$URL" \
-        -d "${payload}"
+        -d "${payload}")
         response=$(cat curl_out.log)
         echo "Response: $response"
-        echo "DONE..."
+        if [[ $result = 201 ]]; then
+          echo "Trigger successful."
+          exit 0;
+        else
+          echo "Trigger failed with http code: ${result}"
+          exit 1;
+        fi
       shell: bash
       env:
         AUTH: ${{ inputs.AUTH }}
