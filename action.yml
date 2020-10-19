@@ -60,11 +60,11 @@ runs:
             ]
           }')
         echo "Payload: ${payload}"
-        curl -X POST --verbose -is -u "$AUTH" --output out.txt -w "%{http_code}" \
+        curl -X POST --verbose -is -u "$AUTH" --output curl_out.log -w "%{http_code}" \
         -H 'Content-Type: application/json' \
         "$URL" \
         -d "${payload}"
-        response=$(cat out.txt)
+        response=$(cat curl_out.log)
         echo "Response: $response"
       shell: bash
       env:
