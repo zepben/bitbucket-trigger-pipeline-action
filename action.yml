@@ -59,6 +59,7 @@ runs:
               }
             ]
           }')
+        echo "Payload: ${payload}"
         curl -X POST --verbose -is -u "$AUTH" \
         -H 'Content-Type: application/json' \
         "$URL" \
